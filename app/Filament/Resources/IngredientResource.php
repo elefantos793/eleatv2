@@ -34,16 +34,7 @@ class IngredientResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->required(),
-
-                Placeholder::make('created_at')
-                    ->label('Created Date')
-                    ->content(fn(?Ingredient $record): string => $record?->created_at?->diffForHumans() ?? '-'),
-
-                Placeholder::make('updated_at')
-                    ->label('Last Modified Date')
-                    ->content(fn(?Ingredient $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
+                TextInput::make('name') ->required(),
             ]);
     }
 

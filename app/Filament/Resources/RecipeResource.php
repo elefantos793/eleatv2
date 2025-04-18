@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RecipeResource\Pages;
+use App\Filament\Resources\RecipeResource\RelationManagers\IngredientsRelationManager;
+use App\Filament\Resources\RecipeResource\RelationManagers\RecipeIngredientsRelationManager;
 use App\Models\Recipe;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\MarkdownEditor;
@@ -82,10 +84,10 @@ class RecipeResource extends Resource
                 TrashedFilter::make(),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
-                RestoreAction::make(),
-                ForceDeleteAction::make(),
+                EditAction::make()->iconButton(),
+                DeleteAction::make()->iconButton(),
+                RestoreAction::make()->iconButton(),
+                ForceDeleteAction::make()->iconButton(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -94,6 +96,13 @@ class RecipeResource extends Resource
                     ForceDeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return[
+            IngredientsRelationManager::class
+        ];
     }
 
     public static function getPages(): array
