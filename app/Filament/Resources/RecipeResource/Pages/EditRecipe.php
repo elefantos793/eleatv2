@@ -20,4 +20,14 @@ class EditRecipe extends EditRecord
             RestoreAction::make(),
         ];
     }
+
+    public function getContentTabLabel(): string
+    {
+        return 'Generals';
+    }
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
 }

@@ -7,6 +7,7 @@ use App\Filament\Resources\RecipeResource\RelationManagers\IngredientsRelationMa
 use App\Models\Recipe;
 use Filament\Forms\Components\Grid as FormGrid;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid as InfolistGrid;
@@ -26,6 +27,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Guava\FilamentModalRelationManagers\Actions\Table\RelationManagerAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -40,26 +42,35 @@ class RecipeResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                TextInput::make('title')
-                    ->required(),
+        return $form->schema([
+            Tabs::make('Recipe')
+                ->tabs([
+                    Tabs\Tab::make('Generals')
+                        ->schema([
+                            TextInput::make('title')
+                                ->required(),
 
-                MarkdownEditor::make('description')
-                    ->columnSpanFull()
-                    ->required(),
+                            MarkdownEditor::make('description')
+                                ->columnSpanFull()
+                                ->required(),
 
-                FormGrid::make(['default' => 3])->schema([
-                    TextInput::make('duration_in_minutes')
-                        ->integer(),
+                            FormGrid::make(['default' => 3])->schema([
+                                TextInput::make('duration_in_minutes')
+                                    ->integer(),
 
-                    TextInput::make('rating')
-                        ->numeric(),
+                                TextInput::make('rating')
+                                    ->numeric(),
 
-                    TextInput::make('difficulty')
-                        ->numeric(),
-                ]),
-            ]);
+                                TextInput::make('difficulty')
+                                    ->numeric(),
+                            ]),
+                        ]),
+                    Tabs\Tab::make('Instructions')
+                        ->schema([
+                            MarkdownEditor::make('instructions')
+                        ]),
+                ])
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -86,6 +97,7 @@ class RecipeResource extends Resource
                 TrashedFilter::make(),
             ])
             ->actions([
+                RelationManagerAction::make('ingredients')->relationManager(IngredientsRelationManager::class),
                 ViewAction::make()->iconButton(),
                 EditAction::make()->iconButton(),
                 DeleteAction::make()->iconButton(),
