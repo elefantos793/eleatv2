@@ -4,14 +4,15 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RecipeResource\Pages;
 use App\Filament\Resources\RecipeResource\RelationManagers\IngredientsRelationManager;
-use App\Filament\Resources\RecipeResource\RelationManagers\RecipeIngredientsRelationManager;
 use App\Models\Recipe;
-use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Grid as FormGrid;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Grid as InfolistGrid;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -21,6 +22,7 @@ use Filament\Tables\Actions\ForceDeleteAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -47,7 +49,7 @@ class RecipeResource extends Resource
                     ->columnSpanFull()
                     ->required(),
 
-                Grid::make(['default' => 3])->schema([
+                FormGrid::make(['default' => 3])->schema([
                     TextInput::make('duration_in_minutes')
                         ->integer(),
 
@@ -84,6 +86,7 @@ class RecipeResource extends Resource
                 TrashedFilter::make(),
             ])
             ->actions([
+                ViewAction::make()->iconButton(),
                 EditAction::make()->iconButton(),
                 DeleteAction::make()->iconButton(),
                 RestoreAction::make()->iconButton(),
@@ -95,6 +98,39 @@ class RecipeResource extends Resource
                     RestoreBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make()
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('title')
+                            ->label('')
+                            ->columnSpanFull()
+                            ->size(TextEntry\TextEntrySize::Large),
+                        TextEntry::make('description')
+                            ->label('')
+                            ->html()
+                            ->columnSpanFull(),
+                        InfolistGrid::make(['default' => 3])->schema([
+                            TextEntry::make('duration_in_minutes')
+                                ->label('')
+                                ->suffix(' min')
+                                ->size(TextEntry\TextEntrySize::ExtraSmall),
+                            TextEntry::make('rating')
+                                ->label('')
+                                ->size(TextEntry\TextEntrySize::ExtraSmall)
+                                ->icon('heroicon-s-star'),
+                            TextEntry::make('difficulty')
+                                ->label('')
+                                ->size(TextEntry\TextEntrySize::ExtraSmall)
+                                ->icon('heroicon-s-arrow-trending-up'),
+                        ]),
+                    ])
             ]);
     }
 
@@ -110,6 +146,7 @@ class RecipeResource extends Resource
         return [
             'index' => Pages\ListRecipes::route('/'),
             'create' => Pages\CreateRecipe::route('/create'),
+            'view' => Pages\ViewRecipe::route('/{record}'),
             'edit' => Pages\EditRecipe::route('/{record}/edit'),
         ];
     }
