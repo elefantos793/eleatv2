@@ -162,6 +162,7 @@ class RecipeResource extends Resource
                                         ->label('')
                                 ])
                             ])
+                            ->contained(false)
                     ])
                 ])
             ]);
