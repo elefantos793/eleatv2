@@ -39,14 +39,6 @@ class UnitResource extends Resource
 
                 TextInput::make('abbreviation')
                     ->required(),
-
-                Placeholder::make('created_at')
-                    ->label('Created Date')
-                    ->content(fn(?Unit $record): string => $record?->created_at?->diffForHumans() ?? '-'),
-
-                Placeholder::make('updated_at')
-                    ->label('Last Modified Date')
-                    ->content(fn(?Unit $record): string => $record?->updated_at?->diffForHumans() ?? '-'),
             ]);
     }
 
@@ -76,6 +68,12 @@ class UnitResource extends Resource
                     ForceDeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        //TODO allow only for admins
+        return true;
     }
 
     public static function getPages(): array
