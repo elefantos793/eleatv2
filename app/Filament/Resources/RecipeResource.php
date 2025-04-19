@@ -85,7 +85,7 @@ class RecipeResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('description'),
+                TextColumn::make('description')->markdown(),
 
                 TextColumn::make('rating'),
 
@@ -133,7 +133,7 @@ class RecipeResource extends Resource
                                     ->size(TextEntry\TextEntrySize::Large),
                                 TextEntry::make('description')
                                     ->label('')
-                                    ->html()
+                                    ->markdown()
                                     ->columnSpanFull(),
                                 InfolistGrid::make(['default' => 3])->schema([
                                     TextEntry::make('duration_in_minutes')
