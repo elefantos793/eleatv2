@@ -124,39 +124,35 @@ class RecipeResource extends Resource
                 Tabs::make('Recipe')->tabs([
                     Tabs\Tab::make('Generals')
                     ->schema([
-                        Section::make()
-                            ->columns(3)
-                            ->schema([
-                                TextEntry::make('title')
-                                    ->label('')
-                                    ->columnSpanFull()
-                                    ->size(TextEntry\TextEntrySize::Large),
-                                TextEntry::make('description')
-                                    ->label('')
-                                    ->markdown()
-                                    ->columnSpanFull(),
-                                InfolistGrid::make(['default' => 3])->schema([
-                                    TextEntry::make('duration_in_minutes')
-                                        ->label('')
-                                        ->suffix(' min')
-                                        ->size(TextEntry\TextEntrySize::ExtraSmall),
-                                    TextEntry::make('rating')
-                                        ->label('')
-                                        ->size(TextEntry\TextEntrySize::ExtraSmall)
-                                        ->icon('heroicon-s-star'),
-                                    TextEntry::make('difficulty')
-                                        ->label('')
-                                        ->size(TextEntry\TextEntrySize::ExtraSmall)
-                                        ->icon('heroicon-s-arrow-trending-up'),
-                                ]),
-                            ])
+                        TextEntry::make('title')
+                            ->label('')
+                            ->columnSpanFull()
+                            ->size(TextEntry\TextEntrySize::Large),
+                        TextEntry::make('description')
+                            ->label('')
+                            ->markdown()
+                            ->columnSpanFull(),
+                        InfolistGrid::make(['default' => 3])->schema([
+                            TextEntry::make('duration_in_minutes')
+                                ->label('')
+                                ->suffix(' min')
+                                ->size(TextEntry\TextEntrySize::ExtraSmall),
+                            TextEntry::make('rating')
+                                ->label('')
+                                ->size(TextEntry\TextEntrySize::ExtraSmall)
+                                ->icon('heroicon-s-star'),
+                            TextEntry::make('difficulty')
+                                ->label('')
+                                ->size(TextEntry\TextEntrySize::ExtraSmall)
+                                ->icon('heroicon-s-arrow-trending-up'),
+                        ]),
                     ]),
                     Tabs\Tab::make('Instructions')->schema([
                         TextEntry::make('instructions')->markdown()->label('')
                     ]),
                     Tabs\Tab::make('Ingredients')->schema([
                         RepeatableEntry::make('ingredients')
-                            ->label('Ingredients')
+                            ->label('')
                             ->schema([
                                 Grid::make(['default' => 3])->schema([
                                     TextEntry::make('name')->label(''),
