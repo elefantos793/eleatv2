@@ -7,11 +7,14 @@ use App\Filament\Resources\RecipeResource\RelationManagers\IngredientsRelationMa
 use App\Models\Recipe;
 use Filament\Forms\Components\Grid as FormGrid;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs as TableTabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Grid as InfolistGrid;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
@@ -43,9 +46,9 @@ class RecipeResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Tabs::make('Recipe')
+            TableTabs::make('Recipe')
                 ->tabs([
-                    Tabs\Tab::make('Generals')
+                    TableTabs\Tab::make('Generals')
                         ->schema([
                             TextInput::make('title')
                                 ->required(),
@@ -65,9 +68,10 @@ class RecipeResource extends Resource
                                     ->numeric(),
                             ]),
                         ]),
-                    Tabs\Tab::make('Instructions')
+                    TableTabs\Tab::make('Instructions')
                         ->schema([
                             MarkdownEditor::make('instructions')
+                                ->default(static fn(): string => file_get_contents(resource_path('markdown/recipe-instruction-template.md')))
                         ]),
                 ])
         ]);
@@ -117,32 +121,53 @@ class RecipeResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make()
-                    ->columns(3)
+                Tabs::make('Recipe')->tabs([
+                    Tabs\Tab::make('Generals')
                     ->schema([
-                        TextEntry::make('title')
-                            ->label('')
-                            ->columnSpanFull()
-                            ->size(TextEntry\TextEntrySize::Large),
-                        TextEntry::make('description')
-                            ->label('')
-                            ->html()
-                            ->columnSpanFull(),
-                        InfolistGrid::make(['default' => 3])->schema([
-                            TextEntry::make('duration_in_minutes')
-                                ->label('')
-                                ->suffix(' min')
-                                ->size(TextEntry\TextEntrySize::ExtraSmall),
-                            TextEntry::make('rating')
-                                ->label('')
-                                ->size(TextEntry\TextEntrySize::ExtraSmall)
-                                ->icon('heroicon-s-star'),
-                            TextEntry::make('difficulty')
-                                ->label('')
-                                ->size(TextEntry\TextEntrySize::ExtraSmall)
-                                ->icon('heroicon-s-arrow-trending-up'),
-                        ]),
+                        Section::make()
+                            ->columns(3)
+                            ->schema([
+                                TextEntry::make('title')
+                                    ->label('')
+                                    ->columnSpanFull()
+                                    ->size(TextEntry\TextEntrySize::Large),
+                                TextEntry::make('description')
+                                    ->label('')
+                                    ->html()
+                                    ->columnSpanFull(),
+                                InfolistGrid::make(['default' => 3])->schema([
+                                    TextEntry::make('duration_in_minutes')
+                                        ->label('')
+                                        ->suffix(' min')
+                                        ->size(TextEntry\TextEntrySize::ExtraSmall),
+                                    TextEntry::make('rating')
+                                        ->label('')
+                                        ->size(TextEntry\TextEntrySize::ExtraSmall)
+                                        ->icon('heroicon-s-star'),
+                                    TextEntry::make('difficulty')
+                                        ->label('')
+                                        ->size(TextEntry\TextEntrySize::ExtraSmall)
+                                        ->icon('heroicon-s-arrow-trending-up'),
+                                ]),
+                            ])
+                    ]),
+                    Tabs\Tab::make('Instructions')->schema([
+                        TextEntry::make('instructions')
+                    ]),
+                    Tabs\Tab::make('Ingredients')->schema([
+                        RepeatableEntry::make('ingredients')
+                            ->label('Ingredients')
+                            ->schema([
+                                Grid::make(['default' => 3])->schema([
+                                    TextEntry::make('name')->label(''),
+                                    TextEntry::make('pivot.amount')
+                                        ->label(''),
+                                    TextEntry::make('pivot.unit.abbreviation')
+                                        ->label('')
+                                ])
+                            ])
                     ])
+                ])
             ]);
     }
 

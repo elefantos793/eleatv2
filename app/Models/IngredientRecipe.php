@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class IngredientRecipe extends Model
+class IngredientRecipe extends Pivot
 {
     use SoftDeletes;
+
+    protected $table = 'ingredient_recipe';
 
     protected $fillable = [
         'recipe_id',
