@@ -18,6 +18,7 @@ class Recipe extends Model
         'rating',
         'duration_in_minutes',
         'difficulty',
+        'instructions',
         'user_id',
     ];
 

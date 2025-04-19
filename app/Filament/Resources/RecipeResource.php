@@ -152,7 +152,7 @@ class RecipeResource extends Resource
                             ])
                     ]),
                     Tabs\Tab::make('Instructions')->schema([
-                        TextEntry::make('instructions')
+                        TextEntry::make('instructions')->markdown()->label('')
                     ]),
                     Tabs\Tab::make('Ingredients')->schema([
                         RepeatableEntry::make('ingredients')
