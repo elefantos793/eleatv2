@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -54,6 +55,18 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->plugins([
+                BreezyCore::make()
+                    ->enableTwoFactorAuthentication()
+                    ->myProfile(
+                        hasAvatars: true,
+                        slug: 'profile',
+                        userMenuLabel: 'Profile'
+                    )
+                    ->avatarUploadComponent(fn($fileUpload) => $fileUpload->disableLabel())
+                    ->enableTwoFactorAuthentication(),
+            ])
+            ;
     }
 }
