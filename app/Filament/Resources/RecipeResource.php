@@ -13,7 +13,6 @@ use Filament\Forms\Form;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Grid as InfolistGrid;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -42,7 +41,7 @@ class RecipeResource extends Resource
 
     protected static ?string $slug = 'recipes';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     public static function form(Form $form): Form
     {
@@ -82,11 +81,15 @@ class RecipeResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(fn(Model $record): string => Pages\ViewRecipe::getUrl([$record->getKey()]))
             ->columns([
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()
-                    ->limit(20),
+                    ->width('full')
+                    ->icon(fn(Model $record) => $record->user->id === auth()->id() ? 'heroicon-s-user' : '')
+                    ->iconPosition('before')
+                ,
 
                 TextColumn::make('description')
                     ->visibleFrom('md')
@@ -115,8 +118,8 @@ class RecipeResource extends Resource
                 RelationManagerAction::make('ingredients')->relationManager(IngredientsRelationManager::class),
                 ActionGroup::make([
                     ViewAction::make(),
-                    EditAction::make(),
-                    DeleteAction::make(),
+                    EditAction::make()->visible(fn(Model $record): bool => $record->user_id === auth()->id() || auth()->user()->hasRole('admin')),
+                    DeleteAction::make()->visible(fn(Model $record): bool => $record->user_id === auth()->id() || auth()->user()->hasRole('admin')),
                     RestoreAction::make(),
                     ForceDeleteAction::make(),
                 ])
