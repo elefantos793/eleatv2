@@ -46,7 +46,6 @@ class ShoppingListResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->recordUrl(fn(Model $record): string => Pages\ViewShoppingList::getUrl([$record->getKey()]))
             ->columns([
                 TextColumn::make('title')
                     ->searchable()
@@ -72,15 +71,6 @@ class ShoppingListResource extends Resource
             ]);
     }
 
-    public static function infolist(Infolist $infolist): Infolist
-    {
-        return $infolist
-            ->schema([
-                TextEntry::make('title')->label(''),
-            ])
-            ;
-    }
-
     public static function getRelations(): array
     {
         return[
@@ -92,7 +82,6 @@ class ShoppingListResource extends Resource
     {
         return [
             'index' => Pages\ListShoppingLists::route('/'),
-            'view' => Pages\ViewShoppingList::route('/{record}'),
             'create' => Pages\CreateShoppingList::route('/create'),
             'edit' => Pages\EditShoppingList::route('/{record}/edit'),
         ];
