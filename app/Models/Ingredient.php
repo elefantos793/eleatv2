@@ -20,6 +20,11 @@ class Ingredient extends Model
         return $this->belongsToMany(Recipe::class)->withPivot('amount', 'unit_id')->withTimestamps();
     }
 
+    public function shoppingLists(): BelongsToMany
+    {
+        return $this->belongsToMany(ShoppingList::class)->withPivot('amount', 'unit_id')->withTimestamps();
+    }
+
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class, 'unit_id');

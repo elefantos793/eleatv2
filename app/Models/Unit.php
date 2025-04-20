@@ -26,4 +26,16 @@ class Unit extends Model
             'ingredient_id'
         );
     }
+
+    public function ingredientShoppingLists(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Ingredient::class,
+            IngredientShoppingList::class,
+            'unit_id',
+            'id',
+            'id',
+            'ingredient_id'
+        );
+    }
 }
