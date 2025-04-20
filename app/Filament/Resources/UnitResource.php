@@ -70,12 +70,6 @@ class UnitResource extends Resource
             ]);
     }
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        //TODO allow only for admins
-        return true;
-    }
-
     public static function getPages(): array
     {
         return [

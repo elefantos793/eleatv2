@@ -18,6 +18,7 @@ use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -47,6 +48,7 @@ class RecipeResource extends Resource
     {
         return $form->schema([
             TableTabs::make('Recipe')
+                ->columnSpanFull()
                 ->tabs([
                     TableTabs\Tab::make('Generals')
                         ->schema([
@@ -83,30 +85,41 @@ class RecipeResource extends Resource
             ->columns([
                 TextColumn::make('title')
                     ->searchable()
+                    ->sortable()
+                    ->limit(20),
+
+                TextColumn::make('description')
+                    ->visibleFrom('md')
+                    ->limit(25),
+
+                TextColumn::make('rating')
+                    ->icon('heroicon-s-star')
+                    ->label('')
                     ->sortable(),
 
-                TextColumn::make('description')->markdown(),
-
-                TextColumn::make('rating'),
-
-                TextColumn::make('duration_in_minutes'),
-
-                TextColumn::make('difficulty'),
-
-                TextColumn::make('user.name')
-                    ->searchable()
+                TextColumn::make('duration_in_minutes')
+                    ->label('')
+                    ->formatStateUsing(fn($record): string => "{$record->duration_in_minutes} min")
                     ->sortable(),
+
+                TextColumn::make('difficulty')
+                    ->label('')
+                    ->icon('heroicon-s-arrow-trending-up')
+                    ->sortable(),
+
             ])
             ->filters([
                 TrashedFilter::make(),
             ])
             ->actions([
                 RelationManagerAction::make('ingredients')->relationManager(IngredientsRelationManager::class),
-                ViewAction::make()->iconButton(),
-                EditAction::make()->iconButton(),
-                DeleteAction::make()->iconButton(),
-                RestoreAction::make()->iconButton(),
-                ForceDeleteAction::make()->iconButton(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                    RestoreAction::make(),
+                    ForceDeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -121,7 +134,9 @@ class RecipeResource extends Resource
     {
         return $infolist
             ->schema([
-                Tabs::make('Recipe')->tabs([
+                Tabs::make('Recipe')
+                    ->columnSpanFull()
+                    ->tabs([
                     Tabs\Tab::make('Generals')
                     ->schema([
                         TextEntry::make('title')
