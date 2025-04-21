@@ -23,11 +23,12 @@ class IngredientsRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\TextInput::make('amount'),
-                Select::make('unit_id')
-                    ->relationship('unit', 'name')
-                    ->preload()
-                    ->searchable()
-                ,
+                //TODO fix the edit action to not throw a sql error even when working
+//                Select::make('unit_id')
+//                    ->relationship('unit', 'name')
+//                    ->preload()
+//                    ->searchable()
+//                ,
             ]);
     }
 
