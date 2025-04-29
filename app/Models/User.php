@@ -61,6 +61,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return $this->hasMany(Recipe::class);
     }
 
+    public function shoppingLists(): HasMany
+    {
+        return $this->hasMany(ShoppingList::class);
+    }
+
+
     /**
      * Get the user's initials
      */

@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\RecipeResource\RelationManagers;
 
+use App\Filament\Resources\RecipeResource;
 use App\Models\Ingredient;
+use App\Models\ShoppingList;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -77,6 +79,66 @@ class IngredientsRelationManager extends RelationManager
                             ])
                         ,
                     ]),
+
+                Tables\Actions\Action::make('Add to shopping list')
+                    ->icon('heroicon-s-list-bullet')
+                    ->label('Add to Shopping List')
+                    ->modalHeading('Add Ingredients to Shopping List')
+                    ->form(fn():array => [
+                        Select::make('shopping_list_id')
+                            ->label('Select Shopping List')
+                            ->options(
+                                fn() => auth()->user()->shoppingLists()->pluck('title', 'id')
+                            )
+                            ->required()
+                            ->createOptionUsing(function (array $data) {
+                                return ShoppingList::create([
+                                    'title' => $data['title'],
+                                    'user_id' => auth()->id(),
+                                ])->getKey();
+                            })
+                            ->createOptionForm([
+                                TextInput::make('title')
+                                    ->required(),
+                            ])
+                        ,
+                        // Checkbox list for ingredients
+                        Forms\Components\CheckboxList::make('ingredient_ids')
+                            ->label('Select Ingredients')
+                            ->options(
+                                fn(RelationManager $livewire) => $livewire->getOwnerRecord()->ingredients()->pluck('ingredients.name', 'ingredients.id')
+                            )
+                            ->default(
+                                fn(RelationManager $livewire) => $livewire->getOwnerRecord()->ingredients()->pluck('ingredients.id')->toArray()
+                            )
+                            ->columns(1)
+                            ->required()
+                        ,
+                    ])
+                    ->action(function (array $data) {
+                        $shoppingListId = $data['shopping_list_id'];
+                        $ingredientIds = $data['ingredients'] ?? [];
+
+                        $recipe = $this->ownerRecord;
+
+                        foreach ($ingredientIds as $ingredientId) {
+                            $ingredient = $recipe->ingredients()->where('ingredient_id', $ingredientId)->first();
+
+                            if (!$ingredient) {
+                                continue;
+                            }
+
+                            $pivotData = $ingredient->pivot;
+
+                            ShoppingList::find($shoppingListId)->ingredients()->syncWithoutDetaching([
+                                $shoppingListId => [
+                                    'amount' => $pivotData->amount,
+                                    'unit_id' => $pivotData->unit_id,
+                                ],
+                            ]);
+                        }
+                    })
+                ,
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->iconButton(),

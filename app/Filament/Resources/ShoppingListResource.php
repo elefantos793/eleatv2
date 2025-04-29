@@ -7,8 +7,6 @@ use App\Filament\Resources\ShoppingListResource\RelationManagers\IngredientsRela
 use App\Models\ShoppingList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ActionGroup as TableActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
